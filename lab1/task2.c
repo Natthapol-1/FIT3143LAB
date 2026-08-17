@@ -1,6 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <pthread.h>
+
+typedef struct
+{
+    long long start;
+    long long end;
+    long long *primes;
+    long long count;
+    long long capacity;
+} ThreadArg;
 
 int isPrime(long long num)
 {
@@ -17,6 +27,41 @@ int isPrime(long long num)
             return 0;
     }
     return 1;
+}
+
+void *worker(void *arg)
+{
+    ThreadArg *t = (ThreadArg *)arg;
+    t->capacity = 1024;
+    t->count = 0;
+    t->primes = malloc(t->capacity * sizeof(long long));
+
+    if (!t->primes)
+    {
+        perror("Failed to allocate memory for thread primes");
+        pthread_exit(NULL);
+    }
+
+    // Search for primes in the assigned range [start, end]
+    for (long long i = t->start; i <= t->end; i++)
+    {
+        if (isPrime(i))
+        {
+            if (t->count >= t->capacity)
+            {
+                t->capacity *= 2;
+                long long *temp = realloc(t->primes, t->capacity * sizeof(long long));
+                if (!temp)
+                {
+                    perror("Failed to reallocate memory");
+                    break;
+                }
+                t->primes = temp;
+            }
+            t->primes[t->count++] = i;
+        }
+    }
+    return NULL;
 }
 
 int main(int argc, char *argv[])
@@ -36,6 +81,10 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    int num_threads = 4;
+    pthread_t threads[num_threads];
+    ThreadArg args[num_threads];
+
     clock_t start = clock();
     long long count = 0;
 
@@ -44,16 +93,29 @@ int main(int argc, char *argv[])
         printf("Prime numbers up to %lld:\n", limit);
     }
 
-    for (long long i = 2; i <= limit; i++)
+    long long range_start = 2;
+    long long range_end = limit - 1;
+    long long total_range = (range_end >= range_start) ? (range_end - range_start + 1) : 0;
+
+    if (total_range <= 0)
     {
-        if (isPrime(i))
-        {
-            count++;
-            if (limit <= 1000)
-            {
-                printf("%lld ", i);
-            }
-        }
+        printf("No numbers to check for n = %lld\n", limit);
+        return 0;
+    }
+    long long chunk_size = total_range / num_threads;
+    for (int i = 0; i < num_threads; i++)
+    {
+        args[i].start = range_start + (i * chunk_size);
+        args[i].end = (i == num_threads - 1) ? range_end : (args[i].start + chunk_size - 1);
+
+        pthread_create(&threads[i], NULL, worker, &args[i]);
+    }
+
+    long long total_primes = 0;
+    for (int i = 0; i < num_threads; i++)
+    {
+        pthread_join(threads[i], NULL);
+        total_primes += args[i].count;
     }
 
     if (limit <= 1000)
