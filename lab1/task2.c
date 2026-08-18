@@ -72,6 +72,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    // input validation
     char *end = NULL;
     long long limit = strtoll(argv[1], &end, 10);
 

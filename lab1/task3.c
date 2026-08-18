@@ -18,6 +18,17 @@ int isPrime(long long num)
     return 1;
 }
 
+int compare(const void *a, const void *b)
+{
+    long long int_a = *((const long long *)a);
+    long long int_b = *((const long long *)b);
+    if (int_a < int_b)
+        return -1;
+    if (int_a > int_b)
+        return 1;
+    return 0;
+}
+
 int main(int argc, char *argv[])
 {
     if (argc != 2)
@@ -26,6 +37,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    // validate input
     char *end = NULL;
     long long limit = strtoll(argv[1], &end, 10);
 
@@ -37,7 +49,8 @@ int main(int argc, char *argv[])
 
     double start = omp_get_wtime();
     long long count = 0;
-    long long *primes = malloc(((limit + 1) / 2) * sizeof(long long));
+
+    long long *primes = malloc((limit + 1) * sizeof(long long));
     long long found_count = 0;
 
     if (limit <= 1000)
@@ -53,7 +66,6 @@ int main(int argc, char *argv[])
             count++;
             if (limit <= 1000)
             {
-
 #pragma omp critical
                 {
                     printf("%lld ", i);
@@ -61,23 +73,28 @@ int main(int argc, char *argv[])
             }
             else
             {
+                long long idx;
+#pragma omp atomic capture
+                idx = found_count++;
 
-#pragma omp critical
-                {
-                    primes[found_count++] = i;
-                }
+                primes[idx] = i;
             }
         }
     }
 
-    FILE *file = fopen("primes.txt", "w");
-    if (file != NULL)
+    if (limit > 1000)
     {
-        for (long long i = 0; i < found_count; i++)
+        qsort(primes, found_count, sizeof(long long), compare);
+
+        FILE *file = fopen("primes.txt", "w");
+        if (file != NULL)
         {
-            fprintf(file, "%lld ", primes[i]);
+            for (long long i = 0; i < found_count; i++)
+            {
+                fprintf(file, "%lld ", primes[i]);
+            }
+            fclose(file);
         }
-        fclose(file);
     }
 
     free(primes);

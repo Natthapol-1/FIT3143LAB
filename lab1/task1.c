@@ -25,9 +25,9 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    // validate input
     char *end = NULL;
     long long limit = strtoll(argv[1], &end, 10);
-
     if (argv[1][0] == '\0' || *end != '\0' || limit < 2)
     {
         printf("Please enter a valid integer n >= 2.\n");
