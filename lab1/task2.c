@@ -2,17 +2,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <pthread.h>
+#include <unistd.h>
+#include <string.h>
 
-typedef struct
-{
-    long long start;
-    long long end;
-    long long *primes;
-    long long count;
-    long long capacity;
-} ThreadArg;
-
-int isPrime(long long num)
+int is_prime(long long num)
 {
     if (num < 2)
         return 0;
@@ -29,39 +22,58 @@ int isPrime(long long num)
     return 1;
 }
 
-void *worker(void *arg)
+int compare(const void *a, const void *b)
 {
-    ThreadArg *t = (ThreadArg *)arg;
-    t->capacity = 1024;
-    t->count = 0;
-    t->primes = malloc(t->capacity * sizeof(long long));
+    long long int_a = *((const long long *)a);
+    long long int_b = *((const long long *)b);
+    if (int_a < int_b)
+        return -1;
+    if (int_a > int_b)
+        return 1;
+    return 0;
+}
 
-    if (!t->primes)
-    {
-        perror("Failed to allocate memory for thread primes");
-        pthread_exit(NULL);
-    }
+// Structure to pass data to each thread
+typedef struct
+{
+    long long start_val;
+    long long end_val;
+    long long *primes;
+    long long *local_count;
+    long long *global_offset; // To track where each thread writes in the main array
+    pthread_mutex_t *mutex;
+    long long limit;
+} thread_arg_t;
 
-    // Search for primes in the assigned range [start, end]
-    for (long long i = t->start; i <= t->end; i++)
+// Function executed by each thread
+void *check_prime(void *arg)
+{
+    thread_arg_t *data = (thread_arg_t *)arg;
+
+    // Allocate local buffer for this thread's chunk
+    long long range_size = data->end_val - data->start_val + 1;
+    long long *local_primes = malloc(range_size * sizeof(long long));
+    long long local_c = 0;
+
+    for (long long i = data->start_val; i <= data->end_val; i++)
     {
-        if (isPrime(i))
+        if (is_prime(i))
         {
-            if (t->count >= t->capacity)
-            {
-                t->capacity *= 2;
-                long long *temp = realloc(t->primes, t->capacity * sizeof(long long));
-                if (!temp)
-                {
-                    perror("Failed to reallocate memory");
-                    break;
-                }
-                t->primes = temp;
-            }
-            t->primes[t->count++] = i;
+            local_primes[local_c++] = i;
         }
     }
-    return NULL;
+
+    *(data->local_count) = local_c;
+
+    pthread_mutex_lock(data->mutex);
+    long long dest_idx = *(data->global_offset);
+    *(data->global_offset) += local_c;
+    pthread_mutex_unlock(data->mutex);
+
+    memcpy(&data->primes[dest_idx], local_primes, local_c * sizeof(long long));
+
+    free(local_primes);
+    pthread_exit(NULL);
 }
 
 int main(int argc, char *argv[])
@@ -72,7 +84,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // input validation
     char *end = NULL;
     long long limit = strtoll(argv[1], &end, 10);
 
@@ -84,49 +95,77 @@ int main(int argc, char *argv[])
 
     int num_threads = 4;
     pthread_t threads[num_threads];
-    ThreadArg args[num_threads];
+    thread_arg_t thread_args[num_threads];
+    long long local_counts[num_threads];
+    pthread_mutex_t mutex;
+    pthread_mutex_init(&mutex, NULL);
 
-    clock_t start = clock();
-    long long count = 0;
+    double start = (double)clock() / CLOCKS_PER_SEC;
+
+    long long *primes = malloc((limit + 1) * sizeof(long long));
+    long long global_offset = 0;
 
     if (limit <= 1000)
     {
         printf("Prime numbers up to %lld:\n", limit);
     }
 
-    long long range_start = 2;
-    long long range_end = limit - 1;
-    long long total_range = (range_end >= range_start) ? (range_end - range_start + 1) : 0;
-
-    if (total_range <= 0)
+    long long chunk_size = (limit - 1) / num_threads;
+    for (int t = 0; t < num_threads; t++)
     {
-        printf("No numbers to check for n = %lld\n", limit);
-        return 0;
-    }
-    long long chunk_size = total_range / num_threads;
-    for (int i = 0; i < num_threads; i++)
-    {
-        args[i].start = range_start + (i * chunk_size);
-        args[i].end = (i == num_threads - 1) ? range_end : (args[i].start + chunk_size - 1);
+        thread_args[t].start_val = 2 + t * chunk_size;
+        if (t == num_threads - 1)
+        {
+            thread_args[t].end_val = limit;
+        }
+        else
+        {
+            thread_args[t].end_val = thread_args[t].start_val + chunk_size - 1;
+        }
+        thread_args[t].primes = primes;
+        thread_args[t].local_count = &local_counts[t];
+        thread_args[t].global_offset = &global_offset;
+        thread_args[t].mutex = &mutex;
+        thread_args[t].limit = limit;
 
-        pthread_create(&threads[i], NULL, worker, &args[i]);
-    }
-
-    long long total_primes = 0;
-    for (int i = 0; i < num_threads; i++)
-    {
-        pthread_join(threads[i], NULL);
-        total_primes += args[i].count;
+        pthread_create(&threads[t], NULL, check_prime, &thread_args[t]);
     }
 
-    if (limit <= 1000)
+    long long total_count = 0;
+    for (int t = 0; t < num_threads; t++)
     {
+        pthread_join(threads[t], NULL);
+        total_count += local_counts[t];
+    }
+
+    pthread_mutex_destroy(&mutex);
+
+    qsort(primes, total_count, sizeof(long long), compare);
+
+    if (limit > 1000)
+    {
+        FILE *file = fopen("primes.txt", "w");
+        if (file != NULL)
+        {
+            for (long long i = 0; i < total_count; i++)
+            {
+                fprintf(file, "%lld ", primes[i]);
+            }
+            fclose(file);
+        }
+    }
+    else
+    {
+        for (long long i = 0; i < total_count; i++)
+            printf("%lld ", primes[i]);
         printf("\n");
     }
 
-    double elapsed = ((double)(clock() - start)) / CLOCKS_PER_SEC;
+    free(primes);
 
-    printf("Total prime numbers up to %lld: %lld\n", limit, count);
+    double elapsed = ((double)clock() / CLOCKS_PER_SEC) - start;
+
+    printf("Total prime numbers up to %lld: %lld\n", limit, total_count);
     printf("Execution time: %.6f seconds\n", elapsed);
 
     return 0;

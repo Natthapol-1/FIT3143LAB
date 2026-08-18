@@ -2,14 +2,16 @@
 #include <stdlib.h>
 #include <time.h>
 
-int isPrime(long num)
+int is_prime(long long num)
 {
-    if (num < 2 || num % 2 == 0)
+    if (num < 2)
         return 0;
     if (num == 2)
         return 1;
+    if (num % 2 == 0)
+        return 0;
 
-    for (long i = 3; i * i <= num; i += 2)
+    for (long long i = 3; i * i <= num; i += 2)
     {
         if (num % i == 0)
             return 0;
@@ -34,6 +36,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    long long *primes = malloc((limit + 1) * sizeof(long long));
     clock_t start = clock();
     long long count = 0;
 
@@ -44,9 +47,9 @@ int main(int argc, char *argv[])
 
     for (long long i = 2; i <= limit; i++)
     {
-        if (isPrime(i))
+        if (is_prime(i))
         {
-            count++;
+
             if (limit <= 1000)
             {
                 printf("%lld ", i);
@@ -54,14 +57,27 @@ int main(int argc, char *argv[])
             else
             {
 
-                FILE *file = fopen("primes.txt", "a");
-                if (file != NULL)
-                {
-                    fprintf(file, "%lld ", i);
-                    fclose(file);
-                }
+                primes[count] = i;
             }
+            count++;
         }
+    }
+    if (limit <= 1000)
+    {
+        printf("\n");
+    }
+    else
+    {
+        FILE *file = fopen("primes.txt", "w");
+        if (file != NULL)
+        {
+            for (long long i = 0; i < count; i++)
+            {
+                fprintf(file, "%lld ", primes[i]);
+            }
+            fclose(file);
+        }
+        free(primes);
     }
 
     if (limit <= 1000)
