@@ -36,10 +36,10 @@ int compare(const void *a, const void *b)
 // Structure to pass data to each thread
 typedef struct
 {
-    long long start_val;
-    long long end_val;
-    long long *primes;
-    long long *local_count;
+    long long start_val;      // starting index to [primes] to store in each thread
+    long long end_val;        // ending index to [primes] to store in each thread
+    long long *primes;        // main array to store all primes
+    long long *local_count;   // count the number of primes in each thread locally
     long long *global_offset; // To track where each thread writes in the main array
     pthread_mutex_t *mutex;
     long long limit;
@@ -50,11 +50,12 @@ void *check_prime(void *arg)
 {
     thread_arg_t *data = (thread_arg_t *)arg;
 
-    // Allocate local buffer for this thread's chunk
+    // local primes array for storing primes in this thread (will be added to main array later)
     long long range_size = data->end_val - data->start_val + 1;
     long long *local_primes = malloc(range_size * sizeof(long long));
     long long local_c = 0;
 
+    // loop to check all numbers in the assigned range in this thread
     for (long long i = data->start_val; i <= data->end_val; i++)
     {
         if (is_prime(i))
@@ -65,11 +66,13 @@ void *check_prime(void *arg)
 
     *(data->local_count) = local_c;
 
+    // update global offset
     pthread_mutex_lock(data->mutex);
     long long dest_idx = *(data->global_offset);
     *(data->global_offset) += local_c;
     pthread_mutex_unlock(data->mutex);
 
+    // add local_primes back to primes
     memcpy(&data->primes[dest_idx], local_primes, local_c * sizeof(long long));
 
     free(local_primes);
@@ -86,13 +89,14 @@ int main(int argc, char *argv[])
 
     char *end = NULL;
     long long limit = strtoll(argv[1], &end, 10);
-
+    // validate input
     if (argv[1][0] == '\0' || *end != '\0' || limit < 2)
     {
         printf("Please enter a valid integer n >= 2.\n");
         return 1;
     }
 
+    // initialize thread array and mutex
     int num_threads = 4;
     pthread_t threads[num_threads];
     thread_arg_t thread_args[num_threads];
@@ -110,9 +114,11 @@ int main(int argc, char *argv[])
         printf("Prime numbers up to %lld:\n", limit);
     }
 
+    // distribute whole chunk of numbers into smaller equal chunks to each thread
     long long chunk_size = (limit - 1) / num_threads;
     for (int t = 0; t < num_threads; t++)
     {
+        // last thread gets all the remaining numbers since integer division have remainders
         thread_args[t].start_val = 2 + t * chunk_size;
         if (t == num_threads - 1)
         {
@@ -120,8 +126,10 @@ int main(int argc, char *argv[])
         }
         else
         {
+            // the rest gets the same amount
             thread_args[t].end_val = thread_args[t].start_val + chunk_size - 1;
         }
+        // set argument to parse into function called by each thread
         thread_args[t].primes = primes;
         thread_args[t].local_count = &local_counts[t];
         thread_args[t].global_offset = &global_offset;
@@ -132,6 +140,7 @@ int main(int argc, char *argv[])
     }
 
     long long total_count = 0;
+    // wait for all thread to finish
     for (int t = 0; t < num_threads; t++)
     {
         pthread_join(threads[t], NULL);
@@ -140,10 +149,12 @@ int main(int argc, char *argv[])
 
     pthread_mutex_destroy(&mutex);
 
+    // sort them back in order
     qsort(primes, total_count, sizeof(long long), compare);
 
     if (limit > 1000)
     {
+        // print to file
         FILE *file = fopen("primes.txt", "w");
         if (file != NULL)
         {

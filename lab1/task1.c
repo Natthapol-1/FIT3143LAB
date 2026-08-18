@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    // array to store all prime numbers
     long long *primes = malloc((limit + 1) * sizeof(long long));
     clock_t start = clock();
     long long count = 0;
@@ -45,6 +46,7 @@ int main(int argc, char *argv[])
         printf("Prime numbers up to %lld:\n", limit);
     }
 
+    // main loop over all number under limit
     for (long long i = 2; i <= limit; i++)
     {
         if (is_prime(i))
@@ -68,6 +70,7 @@ int main(int argc, char *argv[])
     }
     else
     {
+        // print output to file
         FILE *file = fopen("primes.txt", "w");
         if (file != NULL)
         {

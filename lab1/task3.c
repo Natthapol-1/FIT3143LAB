@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
         {
             if (limit <= 1000)
             {
+                // print to terminal if <= 1000 (already sorted since each thread has at most 1000)
 #pragma omp critical
                 {
                     printf("%lld ", i);
@@ -75,6 +76,7 @@ int main(int argc, char *argv[])
             }
             else
             {
+                // add to array to sort later if > 1000
                 long long idx;
 #pragma omp atomic capture
                 idx = found_count++;
