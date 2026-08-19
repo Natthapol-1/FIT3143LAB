@@ -22,26 +22,13 @@ int is_prime(long long num)
     return 1;
 }
 
-int compare(const void *a, const void *b)
-{
-    long long int_a = *((const long long *)a);
-    long long int_b = *((const long long *)b);
-    if (int_a < int_b)
-        return -1;
-    if (int_a > int_b)
-        return 1;
-    return 0;
-}
-
 // Structure to pass data to each thread
 typedef struct
 {
-    long long start_val;      // starting index to [primes] to store in each thread
-    long long end_val;        // ending index to [primes] to store in each thread
-    long long *primes;        // main array to store all primes
-    long long *local_count;   // count the number of primes in each thread locally
-    long long *global_offset; // To track where each thread writes in the main array
-    pthread_mutex_t *mutex;
+    long long start_val;    // starting index to [primes] to store in each thread
+    long long end_val;      // ending index to [primes] to store in each thread
+    long long *primes;      // main array to store all primes
+    long long *local_count; // count the number of primes in each thread locally
     long long limit;
 } thread_arg_t;
 
@@ -66,14 +53,8 @@ void *check_prime(void *arg)
 
     *(data->local_count) = local_c;
 
-    // update global offset
-    pthread_mutex_lock(data->mutex);
-    long long dest_idx = *(data->global_offset);
-    *(data->global_offset) += local_c;
-    pthread_mutex_unlock(data->mutex);
-
     // add local_primes back to primes
-    memcpy(&data->primes[dest_idx], local_primes, local_c * sizeof(long long));
+    memcpy(data->primes, local_primes, local_c * sizeof(long long));
 
     free(local_primes);
     pthread_exit(NULL);
@@ -96,18 +77,16 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // initialize thread array and mutex
+    // initialize thread array
     int num_threads = 4;
     pthread_t threads[num_threads];
     thread_arg_t thread_args[num_threads];
     long long local_counts[num_threads];
-    pthread_mutex_t mutex;
-    pthread_mutex_init(&mutex, NULL);
 
-    double start = (double)clock() / CLOCKS_PER_SEC;
+    struct timespec start, end_time;
+    clock_gettime(CLOCK_MONOTONIC, &start);
 
     long long *primes = malloc((limit + 1) * sizeof(long long));
-    long long global_offset = 0;
 
     if (limit <= 1000)
     {
@@ -116,6 +95,11 @@ int main(int argc, char *argv[])
 
     // distribute whole chunk of numbers into smaller equal chunks to each thread
     long long chunk_size = (limit - 1) / num_threads;
+
+    // Allocate a separate section of the main array for each thread.
+    // Each thread writes its primes into its own section so no mutex is needed.
+    long long thread_offset = 0;
+
     for (int t = 0; t < num_threads; t++)
     {
         // last thread gets all the remaining numbers since integer division have remainders
@@ -129,17 +113,20 @@ int main(int argc, char *argv[])
             // the rest gets the same amount
             thread_args[t].end_val = thread_args[t].start_val + chunk_size - 1;
         }
+
         // set argument to parse into function called by each thread
-        thread_args[t].primes = primes;
+        thread_args[t].primes = &primes[thread_offset];
         thread_args[t].local_count = &local_counts[t];
-        thread_args[t].global_offset = &global_offset;
-        thread_args[t].mutex = &mutex;
         thread_args[t].limit = limit;
+
+        // Reserve enough space for this thread's entire input range.
+        thread_offset += thread_args[t].end_val - thread_args[t].start_val + 1;
 
         pthread_create(&threads[t], NULL, check_prime, &thread_args[t]);
     }
 
     long long total_count = 0;
+
     // wait for all thread to finish
     for (int t = 0; t < num_threads; t++)
     {
@@ -147,10 +134,24 @@ int main(int argc, char *argv[])
         total_count += local_counts[t];
     }
 
-    pthread_mutex_destroy(&mutex);
+    // Move each thread's primes together so that they are stored consecutively.
+    // Since the threads process consecutive ranges in increasing order,
+    // the final array is already sorted and does not need qsort().
+    long long offset = 0;
+    long long source_offset = 0;
 
-    // sort them back in order
-    qsort(primes, total_count, sizeof(long long), compare);
+    for (int t = 0; t < num_threads; t++)
+    {
+        if (source_offset != offset)
+        {
+            memmove(&primes[offset],
+                    &primes[source_offset],
+                    local_counts[t] * sizeof(long long));
+        }
+
+        offset += local_counts[t];
+        source_offset += thread_args[t].end_val - thread_args[t].start_val + 1;
+    }
 
     if (limit > 1000)
     {
@@ -174,7 +175,11 @@ int main(int argc, char *argv[])
 
     free(primes);
 
-    double elapsed = ((double)clock() / CLOCKS_PER_SEC) - start;
+    clock_gettime(CLOCK_MONOTONIC, &end_time);
+
+    double elapsed =
+        (end_time.tv_sec - start.tv_sec) +
+        (end_time.tv_nsec - start.tv_nsec) / 1e9;
 
     printf("Total prime numbers up to %lld: %lld\n", limit, total_count);
     printf("Execution time: %.6f seconds\n", elapsed);

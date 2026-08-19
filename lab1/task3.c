@@ -20,17 +20,6 @@ int is_prime(long long num)
     return 1;
 }
 
-int compare(const void *a, const void *b)
-{
-    long long int_a = *((const long long *)a);
-    long long int_b = *((const long long *)b);
-    if (int_a < int_b)
-        return -1;
-    if (int_a > int_b)
-        return 1;
-    return 0;
-}
-
 int main(int argc, char *argv[])
 {
     if (argc != 2)
@@ -53,62 +42,82 @@ int main(int argc, char *argv[])
 
     // initialize an array of all primes
     long long *primes = malloc((limit + 1) * sizeof(long long));
-    long long found_count = 0;
+
+    // Each thread gets its own local array and count
+    int max_threads = omp_get_max_threads();
+
+    long long **local_primes = malloc(max_threads * sizeof(long long *));
+    long long *local_counts = calloc(max_threads, sizeof(long long));
 
     if (limit <= 1000)
     {
         printf("Prime numbers up to %lld:\n", limit);
     }
 
-    // give each thread 1000 numbers to check
-#pragma omp parallel for schedule(dynamic, 1000)
-    for (long long i = 2; i <= limit; i++)
+    // Allocate a local array for each thread
+    for (int t = 0; t < max_threads; t++)
     {
-        if (is_prime(i))
-        {
-            if (limit <= 1000)
-            {
-                // print to terminal if <= 1000 (already sorted since each thread has at most 1000)
-#pragma omp critical
-                {
-                    printf("%lld ", i);
-                }
-            }
-            else
-            {
-                // add to array to sort later if > 1000
-                long long idx;
-#pragma omp atomic capture
-                idx = found_count++;
+        local_primes[t] = malloc((limit + 1) * sizeof(long long));
+    }
 
-                // collect them in array
-                primes[idx] = i;
+    // Give each thread numbers to check dynamically.
+    // Each thread stores its primes in its own local array.
+#pragma omp parallel
+    {
+        int thread_id = omp_get_thread_num();
+
+#pragma omp for schedule(dynamic, 1000)
+        for (long long i = 2; i <= limit; i++)
+        {
+            if (is_prime(i))
+            {
+                local_primes[thread_id][local_counts[thread_id]++] = i;
             }
         }
     }
 
-    if (limit > 1000)
-    {
-        // sort then print in file
-        qsort(primes, found_count, sizeof(long long), compare);
+    // Combine each thread's primes in thread order.
+    long long found_count = 0;
 
+    for (int t = 0; t < max_threads; t++)
+    {
+        for (long long i = 0; i < local_counts[t]; i++)
+        {
+            primes[found_count++] = local_primes[t][i];
+        }
+    }
+
+    if (limit <= 1000)
+    {
+        for (long long i = 0; i < found_count; i++)
+        {
+            printf("%lld ", primes[i]);
+        }
+
+        printf("\n");
+    }
+    else
+    {
+        // print to file
         FILE *file = fopen("primes.txt", "w");
+
         if (file != NULL)
         {
             for (long long i = 0; i < found_count; i++)
             {
                 fprintf(file, "%lld ", primes[i]);
             }
+
             fclose(file);
         }
     }
 
-    free(primes);
+    for (int t = 0; t < max_threads; t++)
+        free(local_primes[t]);
 
-    if (limit <= 1000)
-    {
-        printf("\n");
-    }
+    free(local_primes);
+    free(local_counts);
+    free(primes);
 
     double elapsed = omp_get_wtime() - start;
 
