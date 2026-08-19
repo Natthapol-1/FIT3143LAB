@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <string.h>
 
+//Natthapol Sinsirithavorn 34723684 nsin0058@student.monash.edu
+
 int is_prime(long long num)
 {
     if (num < 2)
@@ -62,9 +64,9 @@ void *check_prime(void *arg)
 
 int main(int argc, char *argv[])
 {
-    if (argc != 2)
+    if (argc < 2 || argc > 3)
     {
-        printf("Usage: %s <n>\n", argv[0]);
+        printf("Usage: %s <n> [num_threads]\n", argv[0]);
         return 1;
     }
 
@@ -77,8 +79,18 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    int num_threads = 16;
+    if (argc == 3)
+    {
+        num_threads = atoi(argv[2]);
+        if (num_threads < 1)
+        {
+            printf("Please enter a valid number of threads >= 1.\n");
+            return 1;
+        }
+    }
+
     // initialize thread array
-    int num_threads = 4;
     pthread_t threads[num_threads];
     thread_arg_t thread_args[num_threads];
     long long local_counts[num_threads];

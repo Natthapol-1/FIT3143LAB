@@ -1,0 +1,300 @@
+--- N = 1000000 ---
+Task 1:
+Total prime numbers up to 1000000: 78498
+Execution time: 0.157446 seconds
+Task 2:
+Total prime numbers up to 1000000: 78498
+Execution time: 0.112235 seconds
+Task 3:
+Total prime numbers up to 1000000: 78498
+Execution time: 0.089316 seconds
+--- N = 2000000 ---
+Task 1:
+Total prime numbers up to 2000000: 148933
+Execution time: 0.332075 seconds
+Task 2:
+Total prime numbers up to 2000000: 148933
+Execution time: 0.161346 seconds
+Task 3:
+Total prime numbers up to 2000000: 148933
+Execution time: 0.132201 seconds
+--- N = 3000000 ---
+Task 1:
+Total prime numbers up to 3000000: 216816
+Execution time: 0.556883 seconds
+Task 2:
+Total prime numbers up to 3000000: 216816
+Execution time: 0.381225 seconds
+Task 3:
+Total prime numbers up to 3000000: 216816
+Execution time: 0.222797 seconds
+--- N = 4000000 ---
+Task 1:
+Total prime numbers up to 4000000: 283146
+Execution time: 0.857003 seconds
+Task 2:
+Total prime numbers up to 4000000: 283146
+Execution time: 0.344685 seconds
+Task 3:
+Total prime numbers up to 4000000: 283146
+Execution time: 0.479508 seconds
+--- N = 5000000 ---
+Task 1:
+Total prime numbers up to 5000000: 348513
+Execution time: 1.146130 seconds
+Task 2:
+Total prime numbers up to 5000000: 348513
+Execution time: 0.561221 seconds
+Task 3:
+Total prime numbers up to 5000000: 348513
+Execution time: 0.739773 seconds
+--- N = 6000000 ---
+Task 1:
+Total prime numbers up to 6000000: 412849
+Execution time: 1.519763 seconds
+Task 2:
+Total prime numbers up to 6000000: 412849
+Execution time: 0.413345 seconds
+Task 3:
+Total prime numbers up to 6000000: 412849
+Execution time: 0.386447 seconds
+--- N = 7000000 ---
+Task 1:
+Total prime numbers up to 7000000: 476648
+Execution time: 1.816934 seconds
+Task 2:
+Total prime numbers up to 7000000: 476648
+Execution time: 0.782133 seconds
+Task 3:
+Total prime numbers up to 7000000: 476648
+Execution time: 0.738415 seconds
+--- N = 8000000 ---
+Task 1:
+Total prime numbers up to 8000000: 539777
+Execution time: 2.231608 seconds
+Task 2:
+Total prime numbers up to 8000000: 539777
+Execution time: 1.227540 seconds
+Task 3:
+Total prime numbers up to 8000000: 539777
+Execution time: 0.511662 seconds
+--- N = 9000000 ---
+Task 1:
+Total prime numbers up to 9000000: 602489
+Execution time: 2.638321 seconds
+Task 2:
+Total prime numbers up to 9000000: 602489
+Execution time: 0.885634 seconds
+Task 3:
+Total prime numbers up to 9000000: 602489
+Execution time: 0.671799 seconds
+--- N = 10000000 ---
+Task 1:
+Total prime numbers up to 10000000: 664579
+Execution time: 2.993474 seconds
+Task 2:
+Total prime numbers up to 10000000: 664579
+Execution time: 2.005082 seconds
+Task 3:
+Total prime numbers up to 10000000: 664579
+Execution time: 1.270608 seconds
+--- N = 11000000 ---
+Task 1:
+Total prime numbers up to 11000000: 726517
+Execution time: 3.386857 seconds
+Task 2:
+Total prime numbers up to 11000000: 726517
+Execution time: 0.940126 seconds
+Task 3:
+Total prime numbers up to 11000000: 726517
+Execution time: 2.054702 seconds
+--- N = 12000000 ---
+Task 1:
+Total prime numbers up to 12000000: 788060
+Execution time: 3.902809 seconds
+Task 2:
+Total prime numbers up to 12000000: 788060
+Execution time: 2.494910 seconds
+Task 3:
+Total prime numbers up to 12000000: 788060
+Execution time: 0.913908 seconds
+--- N = 13000000 ---
+Task 1:
+Total prime numbers up to 13000000: 849252
+Execution time: 4.354735 seconds
+Task 2:
+Total prime numbers up to 13000000: 849252
+Execution time: 0.911871 seconds
+Task 3:
+Total prime numbers up to 13000000: 849252
+Execution time: 0.805696 seconds
+--- N = 14000000 ---
+Task 1:
+Total prime numbers up to 14000000: 910077
+Execution time: 4.837241 seconds
+Task 2:
+Total prime numbers up to 14000000: 910077
+Execution time: 0.970127 seconds
+Task 3:
+Total prime numbers up to 14000000: 910077
+Execution time: 0.914342 seconds
+--- N = 15000000 ---
+Task 1:
+Total prime numbers up to 15000000: 970704
+Execution time: 5.332066 seconds
+Task 2:
+Total prime numbers up to 15000000: 970704
+Execution time: 1.009115 seconds
+Task 3:
+Total prime numbers up to 15000000: 970704
+Execution time: 2.469365 seconds
+--- N = 16000000 ---
+Task 1:
+Total prime numbers up to 16000000: 1031130
+Execution time: 5.755380 seconds
+Task 2:
+Total prime numbers up to 16000000: 1031130
+Execution time: 1.423618 seconds
+Task 3:
+Total prime numbers up to 16000000: 1031130
+Execution time: 2.058680 seconds
+--- N = 17000000 ---
+Task 1:
+Total prime numbers up to 17000000: 1091314
+Execution time: 6.385474 seconds
+Task 2:
+Total prime numbers up to 17000000: 1091314
+Execution time: 1.512227 seconds
+Task 3:
+Total prime numbers up to 17000000: 1091314
+Execution time: 1.079249 seconds
+--- N = 18000000 ---
+Task 1:
+Total prime numbers up to 18000000: 1151367
+Execution time: 6.841467 seconds
+Task 2:
+Total prime numbers up to 18000000: 1151367
+Execution time: 3.398706 seconds
+Task 3:
+Total prime numbers up to 18000000: 1151367
+Execution time: 3.386809 seconds
+--- N = 19000000 ---
+Task 1:
+Total prime numbers up to 19000000: 1211050
+Execution time: 7.670622 seconds
+Task 2:
+Total prime numbers up to 19000000: 1211050
+Execution time: 2.437132 seconds
+Task 3:
+Total prime numbers up to 19000000: 1211050
+Execution time: 2.524227 seconds
+--- N = 20000000 ---
+Task 1:
+Total prime numbers up to 20000000: 1270607
+Execution time: 7.911784 seconds
+Task 2:
+Total prime numbers up to 20000000: 1270607
+Execution time: 2.708854 seconds
+Task 3:
+Total prime numbers up to 20000000: 1270607
+Execution time: 3.584245 seconds
+--- N = 21000000 ---
+Task 1:
+Total prime numbers up to 21000000: 1329943
+Execution time: 8.627897 seconds
+Task 2:
+Total prime numbers up to 21000000: 1329943
+Execution time: 3.564806 seconds
+Task 3:
+Total prime numbers up to 21000000: 1329943
+Execution time: 4.117452 seconds
+--- N = 22000000 ---
+Task 1:
+Total prime numbers up to 22000000: 1389261
+Execution time: 9.174930 seconds
+Task 2:
+Total prime numbers up to 22000000: 1389261
+Execution time: 4.230484 seconds
+Task 3:
+Total prime numbers up to 22000000: 1389261
+Execution time: 5.039675 seconds
+--- N = 23000000 ---
+Task 1:
+Total prime numbers up to 23000000: 1448221
+Execution time: 9.563128 seconds
+Task 2:
+Total prime numbers up to 23000000: 1448221
+Execution time: 3.944984 seconds
+Task 3:
+Total prime numbers up to 23000000: 1448221
+Execution time: 3.349028 seconds
+--- N = 24000000 ---
+Task 1:
+Total prime numbers up to 24000000: 1507122
+Execution time: 10.587262 seconds
+Task 2:
+Total prime numbers up to 24000000: 1507122
+Execution time: 3.617307 seconds
+Task 3:
+Total prime numbers up to 24000000: 1507122
+Execution time: 2.833169 seconds
+--- N = 25000000 ---
+Task 1:
+Total prime numbers up to 25000000: 1565927
+Execution time: 10.807275 seconds
+Task 2:
+Total prime numbers up to 25000000: 1565927
+Execution time: 4.029734 seconds
+Task 3:
+Total prime numbers up to 25000000: 1565927
+Execution time: 3.633338 seconds
+--- N = 26000000 ---
+Task 1:
+Total prime numbers up to 26000000: 1624527
+Execution time: 11.582939 seconds
+Task 2:
+Total prime numbers up to 26000000: 1624527
+Execution time: 4.107821 seconds
+Task 3:
+Total prime numbers up to 26000000: 1624527
+Execution time: 4.630036 seconds
+--- N = 27000000 ---
+Task 1:
+Total prime numbers up to 27000000: 1683065
+Execution time: 12.284454 seconds
+Task 2:
+Total prime numbers up to 27000000: 1683065
+Execution time: 5.636765 seconds
+Task 3:
+Total prime numbers up to 27000000: 1683065
+Execution time: 4.408088 seconds
+--- N = 28000000 ---
+Task 1:
+Total prime numbers up to 28000000: 1741430
+Execution time: 12.623788 seconds
+Task 2:
+Total prime numbers up to 28000000: 1741430
+Execution time: 5.467095 seconds
+Task 3:
+Total prime numbers up to 28000000: 1741430
+Execution time: 4.147740 seconds
+--- N = 29000000 ---
+Task 1:
+Total prime numbers up to 29000000: 1799676
+Execution time: 13.403409 seconds
+Task 2:
+Total prime numbers up to 29000000: 1799676
+Execution time: 4.271793 seconds
+Task 3:
+Total prime numbers up to 29000000: 1799676
+Execution time: 3.509056 seconds
+--- N = 30000000 ---
+Task 1:
+Total prime numbers up to 30000000: 1857859
+Execution time: 13.931236 seconds
+Task 2:
+Total prime numbers up to 30000000: 1857859
+Execution time: 5.356185 seconds
+Task 3:
+Total prime numbers up to 30000000: 1857859
+Execution time: 4.294511 seconds

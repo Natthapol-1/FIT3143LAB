@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+//Natthapol Sinsirithavorn 34723684 nsin0058@student.monash.edu
+
 int is_prime(long long num)
 {
     if (num < 2)

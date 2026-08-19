@@ -1,0 +1,54 @@
+--- Threads = 1 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 8.199497 seconds
+--- Threads = 2 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 6.480621 seconds
+--- Threads = 4 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 3.072233 seconds
+--- Threads = 8 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 2.068951 seconds
+--- Threads = 12 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 2.775189 seconds
+--- Threads = 16 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 3.124570 seconds
+--- Threads = 20 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 2.826929 seconds
+--- Threads = 24 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 1.501718 seconds
+--- Threads = 32 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 3.735865 seconds
+--- Threads = 1 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 9.151593 seconds
+--- Threads = 2 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 5.960595 seconds
+--- Threads = 4 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 3.887449 seconds
+--- Threads = 8 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 1.940716 seconds
+--- Threads = 12 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 4.280697 seconds
+--- Threads = 16 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 2.453362 seconds
+--- Threads = 20 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 1.921564 seconds
+--- Threads = 24 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 1.911048 seconds
+--- Threads = 32 ---
+Total prime numbers up to 20000000: 1270607
+Execution time: 1.859935 seconds
