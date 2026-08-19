@@ -135,8 +135,6 @@ int main(int argc, char *argv[])
     }
 
     // Move each thread's primes together so that they are stored consecutively.
-    // Since the threads process consecutive ranges in increasing order,
-    // the final array is already sorted and does not need qsort().
     long long offset = 0;
     long long source_offset = 0;
 
