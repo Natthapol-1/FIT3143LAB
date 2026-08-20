@@ -5,7 +5,8 @@
 #include <unistd.h>
 #include <string.h>
 
-//Natthapol Sinsirithavorn 34723684 nsin0058@student.monash.edu
+// Natthapol Sinsirithavorn 34723684 nsin0058@student.monash.edu
+// Shivam Khadka 33453411 skha0108@student.monash.edu
 
 int is_prime(long long num)
 {
